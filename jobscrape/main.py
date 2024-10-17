@@ -19,6 +19,7 @@ def search_params(search_title, search_location):
 def page_data(url):
     html = scraper.get(url)  # scrape URL
     soup = BeautifulSoup(html.text, "html.parser")  # parse the URL
+    print(soup.find("title"))
     return soup  # return HTML
 
 
@@ -74,11 +75,16 @@ search = [
 ]
 
 
-for topic, location in search:
-    text = search_params(topic, location)
-    jobs = page_data(text)
-    result = job_data(jobs, topic, location)
-    if not result:
-        print(f"Did not find any results matching: {topic} in {location}\n")
-    else:
-        print(f"Found results matching: {topic} in {location}\n")
+success = False
+while not success:
+    for topic, location in search:
+        text = search_params(topic, location)
+        jobs = page_data(text)
+        result = job_data(jobs, topic, location)
+        if not result:
+            time.sleep(1)
+            print(f"Did not find any results matching: {topic} in {location}\n")
+            success = False
+        else:
+            print(f"Found results matching: {topic} in {location}\n")
+            success = True
